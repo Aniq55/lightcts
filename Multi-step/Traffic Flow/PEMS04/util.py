@@ -254,10 +254,11 @@ def generate_from_train_val_test(origin_data, transformer):
 
 def generate_from_data(origin_data, length, transformer):
     data = {}
+    # train_line, val_line = int(length * 0.2), int(length * 0.3)
     train_line, val_line = int(length * 0.6), int(length * 0.8)
     for key, line1, line2 in (('train', 0, train_line),
-                              ('val', train_line, val_line),
-                              ('test', val_line, length)):
+                            ('val', train_line, val_line),
+                            ('test', val_line, length)):
 
         x, y = generate_seq(origin_data['data'][line1: line2], 12, 12)
         data['x_' + key] = x.astype('float32')
@@ -279,8 +280,7 @@ def get_adj_matrix(distance_df_filename, num_of_vertices, type_='connectivity', 
     A = np.zeros((int(num_of_vertices), int(num_of_vertices)), dtype=np.float32)
     if id_filename:
         with open(id_filename, 'r') as f:
-            id_dict = {int(i): idx
-                       for idx, i in enumerate(f.read().strip().split('\n'))}
+            id_dict = {int(i): idx for idx, i in enumerate(f.read().strip().split('\n'))}
         with open(distance_df_filename, 'r') as f:
             f.readline()
             reader = csv.reader(f)
@@ -348,72 +348,72 @@ def generate_data(graph_signal_matrix_name, batch_size, test_batch_size=None, tr
     return data
 
 
-def generate_from_train_val_test(origin_data, transformer):
-    data = {}
-    for key in ('train', 'val', 'test'):
-        x, y = generate_seq(origin_data[key], 12, 12)
-        data['x_' + key] = x.astype('float32')
-        data['y_' + key] = y.astype('float32')
+# def generate_from_train_val_test(origin_data, transformer):
+#     data = {}
+#     for key in ('train', 'val', 'test'):
+#         x, y = generate_seq(origin_data[key], 12, 12)
+#         data['x_' + key] = x.astype('float32')
+#         data['y_' + key] = y.astype('float32')
 
 
-    return data
+#     return data
 
 
-def generate_from_data(origin_data, length, transformer):
-    data = {}
-    train_line, val_line = int(length * 0.6), int(length * 0.8)
-    for key, line1, line2 in (('train', 0, train_line),
-                              ('val', train_line, val_line),
-                              ('test', val_line, length)):
+# def generate_from_data(origin_data, length, transformer):
+#     data = {}
+#     train_line, val_line = int(length * 0.2), int(length * 0.3)
+#     # train_line, val_line = int(length * 0.6), int(length * 0.8)
+#     for key, line1, line2 in (('train', 0, train_line),
+#                             ('val', train_line, val_line),
+#                             ('test', val_line, length)):
 
-        x, y = generate_seq(origin_data['data'][line1: line2], 12, 12)
-        data['x_' + key] = x.astype('float32')
-        data['y_' + key] = y.astype('float32')
-
-
-    return data
+#         x, y = generate_seq(origin_data['data'][line1: line2], 12, 12)
+#         data['x_' + key] = x.astype('float32')
+#         data['y_' + key] = y.astype('float32')
 
 
-def generate_seq(data, train_length, pred_length):
-    seq = np.concatenate([np.expand_dims(
-        data[i: i + train_length + pred_length], 0)
-        for i in range(data.shape[0] - train_length - pred_length + 1)],
-        axis=0)[:, :, :, 0: 1]
-    print(seq.shape)
-    return np.split(seq, 2, axis=1)
+#     return data
 
 
-def get_adj_matrix(distance_df_filename, num_of_vertices, type_='connectivity', id_filename=None):
-    A = np.zeros((int(num_of_vertices), int(num_of_vertices)), dtype=np.float32)
-    if id_filename:
-        with open(id_filename, 'r') as f:
-            id_dict = {int(i): idx
-                       for idx, i in enumerate(f.read().strip().split('\n'))}
-        with open(distance_df_filename, 'r') as f:
-            f.readline()
-            reader = csv.reader(f)
-            for row in reader:
-                if len(row) != 3:
-                    continue
-                i, j, distance = int(row[0]), int(row[1]), float(row[2])
-                A[id_dict[i], id_dict[j]] = 1
-                A[id_dict[j], id_dict[i]] = 1
-        return A
+# def generate_seq(data, train_length, pred_length):
+#     seq = np.concatenate([np.expand_dims(
+#         data[i: i + train_length + pred_length], 0)
+#         for i in range(data.shape[0] - train_length - pred_length + 1)],
+#         axis=0)[:, :, :, 0: 1]
+#     print(seq.shape)
+#     return np.split(seq, 2, axis=1)
 
-    with open(distance_df_filename, 'r') as f:
-        f.readline()
-        reader = csv.reader(f)
-        for row in reader:
-            if len(row) != 3:
-                continue
-            i, j, distance = int(row[0]), int(row[1]), float(row[2])
-            if type_ == 'connectivity':
-                A[i, j] = 1
-                A[j, i] = 1
-            elif type_ == 'distance':
-                A[i, j] = 1 / distance
-                A[j, i] = 1 / distance
-            else:
-                raise ValueError("type_ error, must be connectivity or distance!")
 
-    return A
+# def get_adj_matrix(distance_df_filename, num_of_vertices, type_='connectivity', id_filename=None):
+#     A = np.zeros((int(num_of_vertices), int(num_of_vertices)), dtype=np.float32)
+#     if id_filename:
+#         with open(id_filename, 'r') as f:
+#             id_dict = {int(i): idx for idx, i in enumerate(f.read().strip().split('\n'))}
+#         with open(distance_df_filename, 'r') as f:
+#             f.readline()
+#             reader = csv.reader(f)
+#             for row in reader:
+#                 if len(row) != 3:
+#                     continue
+#                 i, j, distance = int(row[0]), int(row[1]), float(row[2])
+#                 A[id_dict[i], id_dict[j]] = 1
+#                 A[id_dict[j], id_dict[i]] = 1
+#         return A
+
+#     with open(distance_df_filename, 'r') as f:
+#         f.readline()
+#         reader = csv.reader(f)
+#         for row in reader:
+#             if len(row) != 3:
+#                 continue
+#             i, j, distance = int(row[0]), int(row[1]), float(row[2])
+#             if type_ == 'connectivity':
+#                 A[i, j] = 1
+#                 A[j, i] = 1
+#             elif type_ == 'distance':
+#                 A[i, j] = 1 / distance
+#                 A[j, i] = 1 / distance
+#             else:
+#                 raise ValueError("type_ error, must be connectivity or distance!")
+
+#     return A

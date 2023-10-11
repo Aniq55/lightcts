@@ -16,7 +16,7 @@ parser.add_argument('--weight_decay',type=float,default=0.0001,help='weight deca
 parser.add_argument('--epochs',type=int,default=250,help='')
 parser.add_argument('--group',type=float,default=4,help='g^t number')
 parser.add_argument('--print_every',type=int,default=1000,help='')
-parser.add_argument('--save',type=str,default='logs/',help='save path')
+parser.add_argument('--save',type=str,default='/home/chri6578/Documents/lightcts/logs/',help='save path')
 parser.add_argument('--expid',type=int,default=4,help='experiment id')
 parser.add_argument('--checkpoint',type=str,default=None)
 
@@ -24,8 +24,8 @@ args = parser.parse_args()
 
 def main():
     device = torch.device(args.device)
-    adj_mx = get_adj_matrix('data/PEMS04/PEMS04.csv', 307)
-    dataloader = generate_data('data/PEMS04/PEMS04.npz', args.batch_size, args.batch_size)
+    adj_mx = get_adj_matrix('/home/chri6578/Documents/lightcts/data/PEMS04/PEMS04.csv', 307)
+    dataloader = generate_data('/home/chri6578/Documents/lightcts/data/PEMS04/PEMS04.npz', args.batch_size, args.batch_size)
     scaler = dataloader['scaler']
     supports = [torch.tensor(i).to(device) for i in adj_mx]
     engine = trainer(scaler, args.in_dim, args.seq_length, args.nhid , args.dropout, args.learning_rate, args.weight_decay, args.device, supports, args.group)
