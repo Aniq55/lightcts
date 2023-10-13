@@ -254,8 +254,8 @@ def generate_from_train_val_test(origin_data, transformer):
 
 def generate_from_data(origin_data, length, transformer):
     data = {}
-    # train_line, val_line = int(length * 0.2), int(length * 0.3)
-    train_line, val_line = int(length * 0.6), int(length * 0.8)
+    train_line, val_line = int(length * 0.2), int(length * 0.3)
+    # train_line, val_line = int(length * 0.6), int(length * 0.8)
     for key, line1, line2 in (('train', 0, train_line),
                             ('val', train_line, val_line),
                             ('test', val_line, length)):
