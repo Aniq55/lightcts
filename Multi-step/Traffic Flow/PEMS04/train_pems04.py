@@ -9,14 +9,14 @@ from engine import trainer
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--device',type=str,default='cuda:0',help='')
-parser.add_argument('--seq_length',type=int,default=12,help='')
+parser.add_argument('--seq_length',type=int,default=1,help='')
 parser.add_argument('--nhid',type=int,default=64,help='')
 parser.add_argument('--in_dim',type=int,default=1,help='inputs dimension')
 parser.add_argument('--batch_size',type=int,default=64,help='batch size')
 parser.add_argument('--learning_rate',type=float,default=0.002,help='learning rate')
 parser.add_argument('--dropout',type=float,default=0.1,help='dropout rate')
 parser.add_argument('--weight_decay',type=float,default=0.0001,help='weight decay rate')
-parser.add_argument('--epochs',type=int,default=80,help='')
+parser.add_argument('--epochs',type=int,default=50,help='')
 parser.add_argument('--group',type=float,default=4,help='g^t number')
 parser.add_argument('--print_every',type=int,default=1000,help='')
 parser.add_argument('--save',type=str,default='/home/chri6578/Documents/lightcts/logs/',help='save path')
@@ -110,7 +110,7 @@ def main():
     amape = []
     armse = []
     print(yhat.shape, realy.shape)
-    for i in range(12):
+    for i in range(args.seq_length):
         pred = yhat[...,i]
         real = realy[...,i]
         metrics = util.metric(pred, real)

@@ -244,7 +244,7 @@ def generate_data(graph_signal_matrix_name, batch_size, test_batch_size=None, tr
 def generate_from_train_val_test(origin_data, transformer):
     data = {}
     for key in ('train', 'val', 'test'):
-        x, y = generate_seq(origin_data[key], 12, 12)
+        x, y = generate_seq(origin_data[key], 12, 1)
         data['x_' + key] = x.astype('float32')
         data['y_' + key] = y.astype('float32')
 
@@ -260,7 +260,7 @@ def generate_from_data(origin_data, length, transformer):
                             ('val', train_line, val_line),
                             ('test', val_line, length)):
 
-        x, y = generate_seq(origin_data['data'][line1: line2], 12, 12)
+        x, y = generate_seq(origin_data['data'][line1: line2], 12, 1)
         data['x_' + key] = x.astype('float32')
         data['y_' + key] = y.astype('float32')
 
@@ -268,12 +268,26 @@ def generate_from_data(origin_data, length, transformer):
     return data
 
 
+# def generate_seq(data, train_length, pred_length):
+#     seq = np.concatenate([np.expand_dims(
+#         data[i: i + train_length + pred_length], 0)
+#         for i in range(data.shape[0] - train_length - pred_length + 1)],
+#         axis=0)[:, :, :, 0: 1]
+#     return np.split(seq, 2, axis=1)
+
 def generate_seq(data, train_length, pred_length):
-    seq = np.concatenate([np.expand_dims(
-        data[i: i + train_length + pred_length], 0)
+    seq_train = np.concatenate([np.expand_dims(
+        data[i: i + train_length], 0)
         for i in range(data.shape[0] - train_length - pred_length + 1)],
         axis=0)[:, :, :, 0: 1]
-    return np.split(seq, 2, axis=1)
+    
+    seq_pred = np.concatenate([np.expand_dims(
+        data[i + train_length: i + train_length + pred_length], 0)
+        for i in range(data.shape[0] - train_length - pred_length + 1)],
+        axis=0)[:, :, :, 0: 1]
+    
+    
+    return seq_train, seq_pred
 
 
 def get_adj_matrix(distance_df_filename, num_of_vertices, type_='connectivity', id_filename=None):
